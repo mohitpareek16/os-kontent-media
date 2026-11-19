@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+backend/.env
+
+# Node
+node_modules/
+frontend/dist/
+
+# Build artifacts
+*.tsbuildinfo
+extension/web-ext-artifacts/
+
+# extension/dist/zen and extension/dist/chrome are deliberately NOT ignored —
+# they are built on the server and pulled down ready to load in Zen/Chrome, so
+# nobody needs a build toolchain locally. Always run extension/build.sh before
+# committing extension changes, or dist goes stale against the source next to
+# it. The .xpi/.zip next to them stay ignored: zip embeds timestamps, so every
+# rebuild is a different binary, and a temporary add-on loads from the
+# unpacked folder anyway.
+extension/dist/*.xpi
+extension/dist/*.zip
+
+# Env
+.env
+
+# OS
+.DS_Store
+
+# Data
+uploads/
+
+# Certbot ACME challenge files (runtime only, not the certs themselves)
+deploy/certbot-webroot/*
+!deploy/certbot-webroot/.gitkeep

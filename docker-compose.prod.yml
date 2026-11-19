@@ -1,0 +1,14 @@
+# Production overlay — used only on the server, alongside docker-compose.yml:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Adds HTTPS: publishes 443, mounts the host's Let's Encrypt certs (obtained
+# via certbot on the host — see docs/10-deployment-guide.md), and swaps in
+# the TLS-enabled Nginx config. Not used for local dev, which stays on the
+# plain HTTP config in docker-compose.yml.
+services:
+  web:
+    ports:
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./frontend/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro

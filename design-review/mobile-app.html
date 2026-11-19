@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontent OS – Mobile app design (iOS + Android)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E6F2;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#1A1528}
+.top{position:sticky;top:0;z-index:50;background:#1A1528;color:#fff;display:flex;gap:10px;align-items:center;padding:10px 18px;flex-wrap:wrap}
+.top b{font:700 15px Outfit;margin-right:6px}
+.top a{color:#CFC8E8;text-decoration:none;font-size:13px;padding:5px 9px;border-radius:6px}.top a:hover{background:#2c2440;color:#fff}
+.top .sp{flex:1}
+.btn{font:600 12px 'Plus Jakarta Sans';border:1px solid #4a3f70;background:transparent;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer}.btn.on{background:#7F00FF;border-color:#7F00FF}
+.wrap{max-width:1500px;margin:0 auto;padding:26px 22px 8px}
+h2.sec{font:800 24px Outfit;margin:8px 0 4px}
+p.lead{color:#4B4760;font-size:14px;max-width:880px;margin:0 0 14px}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-bottom:18px}
+.note{background:#fff;border:1px solid #DDD8EC;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.45}
+.note b{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#7F00FF;color:#fff;font-size:11px;align-items:center;justify-content:center;margin-right:6px}
+.note u{text-decoration:none;color:#047857;font-weight:700}
+.row{display:flex;gap:34px;flex-wrap:wrap;margin-bottom:34px;align-items:flex-start}
+.cell h4{margin:0 0 8px;font:700 12px 'Plus Jakarta Sans';letter-spacing:.08em;text-transform:uppercase;display:flex;gap:6px;align-items:center}
+.cell h4 span{padding:2px 8px;border-radius:99px;color:#fff;background:#1A1528}
+.cell h4 span.and{background:#1B6B3A}
+.hide-ios .ios,.hide-and .and-cell{display:none}
+.hide-ios .cell.ios{display:none}.hide-and .cell.and-cell{display:none}
+.cap{font-size:12px;color:#4B4760;max-width:390px;margin-top:8px;line-height:1.45}
+
+/* ====== phone ====== */
+.ph{width:390px;height:844px;border-radius:46px;background:#000;padding:9px;box-shadow:0 20px 50px -18px rgba(26,21,40,.55);position:relative}
+.scr{width:100%;height:100%;border-radius:38px;overflow:hidden;position:relative;display:flex;flex-direction:column;
+ --k-primary:#7F00FF;--k-primary-600:#6D00DB;--k-primary-50:#F6EEFF;--k-primary-100:#EBDCFF;--k-bg:#F7F6FB;--k-surface:#FFFFFF;--k-surface-2:#FAF9FD;--k-line:#E6E2F0;--k-line-strong:#D3CDE4;--k-text:#1A1528;--k-text-2:#4B4760;--k-text-3:#6B6785;--k-ok:#047857;--k-ok-bg:#E2F7F0;--k-warn:#92400E;--k-warn-bg:#FEF1DD;--k-bad:#B91C1C;--k-bad-bg:#FDECEC;
+ background:var(--k-bg);color:var(--k-text);font-size:15px;line-height:1.45}
+.dark .scr{--k-primary:#8F3EFF;--k-primary-600:#B58CFF;--k-primary-50:#241A3F;--k-primary-100:#33265A;--k-bg:#0E0B18;--k-surface:#17122A;--k-surface-2:#1C1632;--k-line:#2B2445;--k-line-strong:#3A3159;--k-text:#F3F0FC;--k-text-2:#C4BFD9;--k-text-3:#9A94B5;--k-ok:#4ADE9F;--k-ok-bg:rgba(74,222,159,.12);--k-warn:#FBBF5C;--k-warn-bg:rgba(251,191,92,.12);--k-bad:#FF8A8A;--k-bad-bg:rgba(255,138,138,.12)}
+.scr *{box-sizing:border-box}
+.scr h1,.scr h2,.scr h3,.scr h4{font-family:Outfit,sans-serif;margin:0}
+.num{font-family:Outfit,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.body{flex:1;overflow:hidden;padding:0 16px 16px}
+.sb{display:flex;justify-content:space-between;align-items:center;padding:0 26px;flex-shrink:0;font-weight:700}
+.ios .sb{height:54px;padding-top:14px;font-size:16px}
+.and .sb{height:36px;font-size:13px;padding:0 22px}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:118px;height:34px;border-radius:20px;background:#000;z-index:5}
+.punch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:#000;z-index:5}
+.sb i{font-size:14px;margin-left:4px}
+/* iOS chrome */
+.ios .nav{display:flex;align-items:center;justify-content:space-between;padding:4px 16px 0;height:44px;flex-shrink:0;color:var(--k-primary-600);font-size:17px}
+.ios .nav .t{position:absolute;left:0;right:0;text-align:center;font-weight:700;color:var(--k-text);pointer-events:none}
+.ios .large{padding:2px 16px 10px;font:700 32px Outfit;letter-spacing:-.02em;flex-shrink:0}
+.ios .tabs{flex-shrink:0;height:83px;border-top:.5px solid var(--k-line-strong);background:color-mix(in srgb,var(--k-surface) 88%,transparent);display:flex;padding:7px 4px 0}
+.ios .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:600;color:var(--k-text-3);position:relative}
+.ios .tab i{font-size:25px}.ios .tab.on{color:var(--k-primary)}
+.ios .tab .badge{position:absolute;top:-2px;left:56%;background:#B91C1C;color:#fff;border-radius:99px;font-size:11px;min-width:18px;height:18px;line-height:18px;text-align:center;padding:0 4px}
+.home-i{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:140px;height:5px;border-radius:3px;background:var(--k-text);opacity:.85;z-index:6}
+/* Android chrome */
+.and .app-bar{display:flex;align-items:center;gap:12px;height:64px;padding:0 6px 0 16px;flex-shrink:0;background:var(--k-bg)}
+.and .app-bar h1{font-size:22px;font-weight:600;flex:1}
+.and .app-bar .ic{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--k-text-2)}
+.and .nav-bar{flex-shrink:0;height:80px;background:var(--k-primary-50);display:flex;padding:12px 8px 16px}
+.and .nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--k-text-2);position:relative}
+.and .nb .pill{width:64px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.and .nb.on{color:var(--k-text)}.and .nb.on .pill{background:var(--k-primary-100);color:var(--k-primary-600)}
+.and .nb .badge{position:absolute;top:-2px;left:56%;background:#B91C1C;color:#fff;border-radius:99px;font-size:11px;min-width:16px;height:16px;line-height:16px;text-align:center;padding:0 4px}
+.gest{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:120px;height:4px;border-radius:2px;background:var(--k-text);opacity:.6;z-index:6}
+.fab{position:absolute;right:16px;bottom:96px;height:56px;padding:0 20px;border-radius:16px;background:var(--k-primary);color:#fff;display:flex;align-items:center;gap:8px;font-weight:700;box-shadow:0 6px 16px rgba(127,0,255,.4);z-index:4}
+/* content atoms */
+.card{background:var(--k-surface);border:1px solid var(--k-line);border-radius:16px}
+.ios .card{border:0;box-shadow:0 1px 2px rgba(26,21,40,.06)}
+.dark.ios .card{box-shadow:none;border:1px solid var(--k-line)}
+.sub{font-size:13px;color:var(--k-text-3)}
+.eyebrow{font-weight:700;font-size:13px;color:var(--k-text-2);margin:18px 2px 8px;display:flex;justify-content:space-between}
+.eyebrow span{font-weight:500;color:var(--k-text-3)}
+.chip{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--k-line-strong);background:var(--k-surface);font-weight:700;font-size:14px;white-space:nowrap;color:var(--k-text-2)}
+.chip.on{background:var(--k-primary);border-color:var(--k-primary);color:#fff}
+.chips{display:flex;gap:8px;overflow:hidden;margin:0 -16px;padding:2px 16px 6px}
+.sbx{display:flex;align-items:center;gap:8px;height:44px;border-radius:12px;background:var(--k-surface);border:1px solid var(--k-line-strong);padding:0 12px;color:var(--k-text-3)}
+.ios .sbx{background:color-mix(in srgb,var(--k-text) 7%,transparent);border:0;border-radius:10px;height:38px}
+.stp{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.stp:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.s-intake{background:#EDEEF0;color:#4B5563}.s-assigned{background:#E9EFFD;color:#1D4ED8}.s-editing{background:#E7F4F3;color:#0F766E}.s-qc1{background:#F2EBFD;color:#6D28D9}.s-qc2{background:#FEF1DD;color:#92400E}.s-revisions{background:#FDECEC;color:#B91C1C}.s-final{background:#E2F4FC;color:#075985}.s-delivered{background:#E2F7F0;color:#047857}
+.dark .s-intake{background:rgba(255,255,255,.08);color:#C4BFD9}.dark .s-assigned{background:rgba(96,140,255,.16);color:#9DB8FF}.dark .s-editing{background:rgba(45,212,191,.14);color:#5EEAD4}.dark .s-qc1{background:rgba(167,139,250,.16);color:#C4B5FD}.dark .s-qc2{background:rgba(251,191,92,.14);color:#FBBF5C}.dark .s-revisions{background:rgba(255,138,138,.14);color:#FF8A8A}.dark .s-final{background:rgba(56,189,248,.14);color:#7DD3FC}.dark .s-delivered{background:rgba(74,222,159,.14);color:#4ADE9F}
+.tag{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:700;background:var(--k-surface-2);border:1px solid var(--k-line);color:var(--k-text-2)}
+.tag.rush{background:var(--k-bad-bg);border-color:transparent;color:var(--k-bad)}
+.av{width:30px;height:30px;border-radius:50%;background:var(--k-primary-100);color:var(--k-primary-600);font:700 12px Outfit;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.job{padding:14px 16px;margin-bottom:10px;border-left:4px solid transparent}
+.job .t1{font-weight:700;font-size:16px;line-height:1.3}
+.job .m{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;font-size:12px;color:var(--k-text-3)}
+.job .f{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.due{font-weight:700;font-size:14px}
+.bar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--k-line);gap:2px;margin:12px 0 8px}.bar i{display:block}
+.seg{display:flex;background:color-mix(in srgb,var(--k-text) 8%,transparent);border-radius:9px;padding:2px;margin-bottom:12px}
+.seg span{flex:1;text-align:center;font-size:13px;font-weight:600;padding:6px 0;border-radius:7px;color:var(--k-text-2)}.seg span.on{background:var(--k-surface);color:var(--k-text);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.list{overflow:hidden}.li{display:flex;align-items:center;gap:14px;padding:0 16px;min-height:52px;border-top:1px solid var(--k-line);font-weight:600}
+.li:first-child{border-top:0}.li i.l{font-size:22px;color:var(--k-text-3)}.li .r{margin-left:auto;color:var(--k-text-3);font-weight:500;font-size:14px}
+.sw{width:46px;height:28px;border-radius:99px;background:var(--k-primary);position:relative;margin-left:auto}.sw:after{content:"";position:absolute;top:2px;right:2px;width:24px;height:24px;border-radius:50%;background:#fff}
+.actionbar{flex-shrink:0;padding:10px 16px 12px;border-top:1px solid var(--k-line);background:var(--k-surface);display:flex;gap:10px}
+.ios .actionbar{padding-bottom:30px}
+.pbtn{flex:1;height:50px;border-radius:14px;background:var(--k-primary);color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.and .pbtn{border-radius:25px}
+.sbtn{height:50px;padding:0 18px;border-radius:14px;border:1px solid var(--k-line-strong);font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--k-text)}
+.and .sbtn{border-radius:25px}
+.field label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}.field .in{height:52px;border:1px solid var(--k-line-strong);background:var(--k-surface);border-radius:12px;display:flex;align-items:center;gap:10px;padding:0 14px;color:var(--k-text-3);font-size:16px}
+.sheetwrap{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;z-index:8}
+.sheet{width:100%;background:var(--k-surface);border-radius:24px 24px 0 0;padding:8px 16px 28px}
+.grab{width:36px;height:5px;border-radius:3px;background:var(--k-line-strong);margin:0 auto 12px}
+.and .sheet{border-radius:28px 28px 0 0}.and .grab{width:32px;height:4px}
+dl{margin:0}.kv{display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--k-line);gap:12px}.kv:first-child{border-top:0}.kv dt{color:var(--k-text-3);font-size:14px}.kv dd{margin:0;font-weight:600;text-align:right}
+</style>
+</head>
+<body>
+<div class="top">
+  <b>Kontent OS · Mobile app design</b>
+  <a href="#overview">Overview</a><a href="#lead">Lead</a><a href="#editor">Editor</a><a href="#qc">QC</a><a href="#job">Job &amp; sheets</a><a href="#more">Inbox &amp; More</a><a href="#login">Login</a><a href="#build">How it's built</a>
+  <span class="sp"></span>
+  <button class="btn on" data-p="both">iOS + Android</button><button class="btn" data-p="ios">iOS</button><button class="btn" data-p="and">Android</button><button class="btn" id="th">Theme: Light</button>
+</div>
+
+<div class="wrap" id="overview">
+  <h2 class="sec">Mobile app – one design, two native feels</h2>
+  <p class="lead">The same screens, content and colours as the desktop redesign, rebuilt for a phone: thumb-reach navigation at the bottom, one task per screen, 44–52px touch targets, 15–16px text, and each platform's own chrome (iOS tab bar + large titles + back swipe; Android bottom navigation + top app bar + gesture bar). All data below is placeholder.</p>
+  <div class="notes">
+    <div class="note"><b>1</b><u>Bottom navigation, per role.</u> Lead: Home · Pipeline · Inbox · Capacity · More. Editor: My queue · Inbox · Brand kits · More. QC: Queue · Inbox · Brand kits · More. HR: Directory · Inbox · More. The 14-link desktop sidebar disappears.</div>
+    <div class="note"><b>2</b><u>Cards instead of tables.</u> Every table becomes a card list; the deadline is the loudest thing on a card; filters live in a bottom sheet behind one button, status in a scrollable chip row.</div>
+    <div class="note"><b>3</b><u>Native behaviours.</u> Safe-area insets (notch, home bar), pull-to-refresh, swipe-back (iOS) / system back (Android), bottom sheets with a grabber, haptic-friendly 44pt targets, no hover-only UI, dark mode follows the OS.</div>
+    <div class="note"><b>4</b><u>Installable.</u> Delivered as an installable web app (home-screen icon, full-screen, splash, push alerts) from the same React code, with a Capacitor wrapper if you want App Store / Play Store listings. See "How it's built".</div>
+  </div>
+</div>
+
+<!-- LEAD -->
+<div class="wrap" id="lead">
+  <h2 class="sec">Owner / Team Lead</h2>
+  <p class="lead">Home answers "what needs me?" first. Pipeline keeps the table/board choice as a list/board switch. Android adds a "New job" button; on iOS it is the + in the navigation bar.</p>
+  <div class="row" id="r-lead"></div>
+</div>
+<!-- EDITOR -->
+<div class="wrap" id="editor">
+  <h2 class="sec">Video editor</h2>
+  <p class="lead">Opens on "My queue": slots left, then what to cut now – the deadline and a single primary button on each card.</p>
+  <div class="row" id="r-editor"></div>
+</div>
+<!-- QC -->
+<div class="wrap" id="qc">
+  <h2 class="sec">QC reviewer</h2>
+  <p class="lead">The queue groups become a scrollable tab row; availability is a switch at the top because it decides routing.</p>
+  <div class="row" id="r-qc"></div>
+</div>
+<!-- JOB -->
+<div class="wrap" id="job">
+  <h2 class="sec">Job detail &amp; filter sheet</h2>
+  <p class="lead">A full-screen page with a pinned action bar (the "next step"); everything secondary is a collapsible row. Filters are a bottom sheet.</p>
+  <div class="row" id="r-job"></div>
+</div>
+<!-- MORE -->
+<div class="wrap" id="more">
+  <h2 class="sec">Inbox &amp; More</h2>
+  <p class="lead">Inbox is a plain grouped list with an unread dot. "More" holds the profile, dark mode, notification settings and the admin/secondary pages that used to crowd the sidebar.</p>
+  <div class="row" id="r-more"></div>
+</div>
+<!-- LOGIN -->
+<div class="wrap" id="login">
+  <h2 class="sec">Sign in</h2>
+  <div class="row" id="r-login"></div>
+</div>
+<div class="wrap" id="build" style="padding-bottom:60px">
+  <h2 class="sec">How it's built</h2>
+  <div class="notes">
+    <div class="note"><b>A</b>Same React app. Below 768px a <code>MobileShell</code> replaces the sidebar: top bar + bottom tab bar chosen per role, content in one scrolling column. Desktop is untouched.</div>
+    <div class="note"><b>B</b>PWA: <code>manifest.webmanifest</code>, icons, <code>viewport-fit=cover</code>, <code>theme-color</code>, Apple meta tags, the existing service worker for push. iPhone: Share → Add to Home Screen (push needs iOS 16.4+ and the installed app).</div>
+    <div class="note"><b>C</b>Store apps (optional): wrap the same build with Capacitor for App Store / Google Play, adding native push, biometrics and haptics. This is a separate, later step.</div>
+    <div class="note"><b>D</b>Platform feel: detect iOS vs Android once and switch the chrome (large title + tab bar vs app bar + nav bar + FAB); everything inside the content area is shared.</div>
+  </div>
+</div>
+
+<script>
+const J=[
+ {t:'Founder story – launch teaser',c:'KM-0412',st:'qc1',lb:'QC 1',due:'Overdue 2d',dd:'Nov 16',tone:'bad',ty:'Reel',rush:1,pod:'Northwind Fitness',ed:'RS',bar:'#7F00FF'},
+ {t:'Product demo – serum routine',c:'KM-0409',st:'editing',lb:'Editing',due:'Today',dd:'Nov 18',tone:'warn',ty:'Short',rush:0,pod:'Lumen Skincare',ed:'MK',bar:'transparent'},
+ {t:'Episode 42 – highlights cut',c:'KM-0405',st:'qc2',lb:'QC 2',due:'In 2 days',dd:'Nov 20',tone:'ok',ty:'Long-form',rush:0,pod:'Orbit Podcast',ed:'AP',bar:'transparent'},
+ {t:'Client testimonial – 30s ad',c:'KM-0398',st:'revisions',lb:'Revisions',due:'Overdue 1d',dd:'Nov 17',tone:'bad',ty:'Ad',rush:1,pod:'Atlas Realty',ed:'MK',bar:'#D97706'}];
+const dc=t=>t==='bad'?'var(--k-bad)':t==='warn'?'var(--k-warn)':'var(--k-text)';
+const jobCard=j=>`<div class="card job" style="border-left-color:${j.bar}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div class="t1">${j.t}</div><span class="stp s-${j.st}">${j.lb}</span></div><div class="m"><span style="font-family:'JetBrains Mono'">${j.c}</span><span class="tag">${j.ty}</span>${j.rush?'<span class="tag rush">Rush</span>':''}<span>${j.pod}</span></div><div class="f"><span class="due" style="color:${dc(j.tone)}"><i class="ri-${j.tone==='bad'?'alarm-warning-fill':'calendar-line'}"></i> ${j.due}</span><span class="av">${j.ed}</span></div></div>`;
+const TABS={
+ lead:[['ri-home-5','Home'],['ri-stack','Pipeline'],['ri-notification-3','Inbox',3],['ri-team','Capacity'],['ri-menu','More']],
+ editor:[['ri-scissors-cut','My queue'],['ri-notification-3','Inbox',2],['ri-book-open','Brand kits'],['ri-menu','More']],
+ qc:[['ri-shield-check','Queue'],['ri-notification-3','Inbox',1],['ri-book-open','Brand kits'],['ri-menu','More']]};
+function sbar(){return `<div class="sb"><span>9:41</span><span><i class="ri-signal-wifi-fill"></i><i class="ri-battery-2-charge-fill"></i></span></div>`}
+function ios(o){const tabs=o.hideTabs?'':`<div class="tabs">${TABS[o.role].map((t,i)=>`<div class="tab ${i===o.tab?'on':''}"><i class="${t[0]}${i===o.tab?'-fill':'-line'}"></i>${t[1]}${t[2]?`<span class="badge">${t[2]}</span>`:''}</div>`).join('')}</div>`;
+ return `<div class="ph"><div class="scr ios"><div class="island"></div>${sbar()}
+ <div class="nav" style="position:relative">${o.back?`<span><i class="ri-arrow-left-s-line" style="font-size:26px;vertical-align:-6px;margin-left:-8px"></i>${o.back}</span>`:'<span></span>'}${o.small&&!o.large?`<span class="t">${o.small}</span>`:''}<span style="display:flex;gap:18px;font-size:22px">${o.nav||''}</span></div>
+ ${o.large?`<div class="large">${o.large}</div>`:''}
+ <div class="body">${o.body}</div>${o.bar||''}${tabs}${o.sheet||''}<div class="home-i"></div></div></div>`}
+function and(o){const tabs=o.hideTabs?'':`<div class="nav-bar">${TABS[o.role].map((t,i)=>`<div class="nb ${i===o.tab?'on':''}"><div class="pill"><i class="${t[0]}${i===o.tab?'-fill':'-line'}"></i></div>${t[1]}${t[2]?`<span class="badge">${t[2]}</span>`:''}</div>`).join('')}</div>`;
+ return `<div class="ph"><div class="scr and"><div class="punch"></div>${sbar()}
+ <div class="app-bar">${o.back?`<span class="ic" style="margin-left:-10px"><i class="ri-arrow-left-line"></i></span>`:''}${(o.small||o.large)?`<h1>${o.small||o.large}</h1>`:'<span style="flex:1"></span>'}${o.nav||''}</div>
+ <div class="body">${o.body}</div>${o.bar||''}${o.fab?`<div class="fab"><i class="ri-add-line" style="font-size:22px"></i> ${o.fab}</div>`:''}${tabs}${o.sheet||''}<div class="gest"></div></div></div>`}
+function pair(id,o,cap){document.getElementById(id).insertAdjacentHTML('beforeend',`<div class="cell ios"><h4><span>iOS</span>${o.name}</h4>${ios(o)}<div class="cap">${cap||''}</div></div><div class="cell and-cell"><h4><span class="and">Android</span>${o.name}</h4>${and(o)}</div>`)}
+
+/* ---- bodies ---- */
+const homeBody=`<div class="eyebrow" style="margin-top:4px">Needs your attention</div>
+ <div class="card" style="padding:16px 18px;border-left:4px solid #7F00FF;margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-weight:700;color:var(--k-text-2)">On my plate<i class="ri-user-line" style="font-size:20px;color:var(--k-primary-600)"></i></div><div class="num" style="font-size:44px;font-weight:700;line-height:1.1;color:var(--k-primary-600)">7</div><div class="sub">Waiting on you right now</div></div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="card" style="padding:14px 16px;border-left:4px solid var(--k-bad)"><div class="sub" style="font-weight:700">Overdue</div><div class="num" style="font-size:34px;font-weight:700;color:var(--k-bad)">3</div></div><div class="card" style="padding:14px 16px;border-left:4px solid var(--k-warn)"><div class="sub" style="font-weight:700">Unassigned</div><div class="num" style="font-size:34px;font-weight:700;color:var(--k-warn)">5</div></div></div>
+ <div class="eyebrow">Pipeline health</div><div class="chips" style="margin-bottom:0">${[['In flight','23'],['Pending QC 1','4'],['Delivered','41'],['First-pass','68%']].map(([l,v])=>`<div class="card" style="padding:10px 16px;min-width:116px"><div class="sub">${l}</div><div class="num" style="font-size:24px;font-weight:700">${v}</div></div>`).join('')}</div>
+ <div class="eyebrow">Client pods <span>most overdue first</span></div>
+ <div class="card" style="padding:14px 16px"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:16px">Northwind Fitness</b><span class="stp" style="background:var(--k-bad-bg);color:var(--k-bad)">3 overdue</span></div><div class="bar"><i style="width:30px;background:#B45309"></i><i style="flex:6;background:#7F00FF"></i><i style="flex:12;background:#10B981"></i></div><div class="sub">2 intake · 6 in flight · 12 delivered</div></div>`;
+const pipeBody=`<div class="sbx" style="margin-bottom:10px"><i class="ri-search-line"></i>Search by title or code</div>
+ <div class="chips">${[['Active 23',1],['Overdue 3'],['Mine 7'],['Intake 5'],['Delivered 41']].map(([l,on])=>`<span class="chip ${on?'on':''}">${l}</span>`).join('')}<span class="chip" style="padding:0 12px"><i class="ri-equalizer-2-line"></i> Filters</span></div>
+ <div class="seg"><span class="on">List</span><span>Board</span></div>${J.slice(0,3).map(jobCard).join('')}`;
+const boardBody=`<div class="sbx" style="margin-bottom:10px"><i class="ri-search-line"></i>Search by title or code</div><div class="seg"><span>List</span><span class="on">Board</span></div>
+ <div class="chips">${[['Intake','5'],['Assigned','4'],['Editing','8',1],['QC 1','4'],['QC 2','3'],['Revisions','2']].map(([l,n,on])=>`<span class="chip ${on?'on':''}">${l} <b class="num" style="opacity:.8">${n}</b></span>`).join('')}</div>
+ <div class="eyebrow" style="margin-top:6px">Editing · 8 <span style="color:var(--k-bad)"><i class="ri-alarm-warning-fill"></i> 1 overdue</span></div>${[J[1],{...J[1],t:'Class schedule promo',c:'KM-0402',due:'In 3 days',tone:'ok',rush:1,pod:'Northwind Fitness',lb:'Editing'}].map(jobCard).join('')}`;
+const slot=on=>`<span style="flex:1;height:10px;border-radius:99px;background:${on?'var(--k-primary)':'var(--k-line)'}"></span>`;
+const queueBody=`<div class="card" style="padding:14px 16px;display:flex;align-items:center;gap:14px"><div><div class="sub" style="font-weight:600">Your slots</div><div class="num" style="font-size:26px;font-weight:700">3 <span style="font-size:15px;color:var(--k-text-3);font-weight:600">of 4 in use</span></div></div><div style="flex:1;display:flex;gap:5px">${slot(1)}${slot(1)}${slot(1)}${slot(0)}</div></div>
+ <div class="eyebrow">Do now <span>soonest first</span></div>
+ <div class="card job" style="border-left-color:var(--k-bad)"><div style="display:flex;gap:6px;margin-bottom:6px"><span class="stp s-revisions">Revisions</span><span class="tag rush">Rush</span></div><div class="t1">Client testimonial – 30s ad</div><div class="m">Atlas Realty · Ad</div><div style="margin-top:8px;font-size:13px;font-weight:600;color:var(--k-bad)"><i class="ri-arrow-go-back-line"></i> Round 2 — sent back with changes</div><div class="f"><span class="due num" style="font-size:20px;color:var(--k-bad)">Overdue 1d</span></div><div class="pbtn" style="margin-top:12px;height:46px">Start revisions <i class="ri-arrow-right-line"></i></div></div>
+ <div class="card job"><div style="display:flex;gap:6px;margin-bottom:6px"><span class="stp s-editing">Editing</span></div><div class="t1">Product demo – serum routine</div><div class="m">Lumen Skincare · Short</div><div class="f"><span class="due num" style="font-size:20px;color:var(--k-warn)">Due today</span><span class="sbtn" style="height:40px">Continue</span></div></div>`;
+const qcBody=`<div class="card" style="padding:14px 16px;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-weight:700">Available for new QC2 work</div><div class="sub">5 of 8 points used today</div><div class="bar" style="margin:8px 0 0"><i style="flex:5;background:var(--k-warn)"></i><i style="flex:3;background:transparent"></i></div></div><div class="sw"></div></div>
+ <div class="chips" style="margin-top:12px">${[['Waiting 3',1],['Sent back 1'],['Elsewhere 2'],['Cleared 9'],['Unrouted 0']].map(([l,on])=>`<span class="chip ${on?'on':''}">${l}</span>`).join('')}</div>
+ ${[J[2],{...J[0],st:'qc2',lb:'QC 2',t:'Behind the scenes – set 2',c:'KM-0395',due:'In 2 days',tone:'ok',rush:0,pod:'Orbit Podcast',bar:'transparent'}].map(jobCard).join('')}`;
+const jobBody=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 8px"><span class="stp s-qc1">QC 1</span><span class="tag rush">Rush</span><span class="tag" style="font-family:'JetBrains Mono'">KM-0412</span></div>
+ <h2 style="font-size:24px;line-height:1.2;font-weight:700">Founder story – launch teaser</h2><div class="sub" style="margin-bottom:12px">Northwind Fitness · Instagram</div>
+ <div style="display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--k-primary-50);border:1px solid var(--k-primary-100);margin-bottom:12px"><span class="av" style="background:#fff">PM</span><div style="flex:1"><div style="font-weight:700">With Priya Mehta · QC 1</div><div class="sub">First-pass review · round 1</div></div></div>
+ <div class="card" style="padding:4px 16px"><dl>${[['Editor','Ravi S.'],['QC reviewer','Not routed yet'],['Deadline','<span style="color:var(--k-bad)">Nov 16 · overdue 2d</span>'],['Client deadline','Nov 18'],['Video type','Reel'],['Revision rounds','1']].map(([k,v])=>`<div class="kv"><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl></div>
+ <div class="card list" style="margin-top:10px">${[['Files on this job','3'],['Change list & comments','0'],['Activity','12'],['Reassign, rush & channel','']].map(([l,r])=>`<div class="li">${l}<span class="r">${r}<i class="ri-arrow-right-s-line"></i></span></div>`).join('')}</div>`;
+const jobBar=`<div class="actionbar"><div class="sbtn">Send back</div><div class="pbtn">Pass to QC 2 <i class="ri-arrow-right-line"></i></div></div>`;
+const filterSheet=`<div class="sheetwrap"><div class="sheet"><div class="grab"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:20px">Filters</h3><span style="color:var(--k-primary-600);font-weight:700">Clear all</span></div>
+ ${[['Stage','All stages'],['Client','Any client'],['Editor','Any editor'],['Deadline','Any date']].map(([l,v])=>`<div class="li" style="padding:0;border-top:1px solid var(--k-line)">${l}<span class="r">${v} <i class="ri-arrow-right-s-line"></i></span></div>`).join('')}
+ <div class="eyebrow" style="margin-top:14px">Quick filters</div><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="chip on"><i class="ri-flashlight-line"></i> Rush</span><span class="chip">QC1 flagged</span><span class="chip">Unrouted QC2</span></div>
+ <div class="pbtn" style="margin-top:16px">Show 4 videos</div></div></div>`;
+const notifBody=`<div class="eyebrow" style="margin-top:2px">Today</div><div class="card list">${[['ri-arrow-go-back-line','var(--k-bad-bg)','var(--k-bad)','Sent back with changes','Client testimonial – 30s ad · Atlas Realty',1],['ri-inbox-line','var(--k-primary-50)','var(--k-primary-600)','Landed with you','Product demo – serum routine · Lumen',1]].map(n=>`<div class="li" style="align-items:flex-start;padding:14px 16px"><span style="width:40px;height:40px;border-radius:12px;background:${n[1]};color:${n[2]};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><i class="${n[0]}"></i></span><div style="flex:1"><div style="font-weight:${n[5]?700:600}">${n[3]}</div><div class="sub">${n[4]}</div></div><span style="width:10px;height:10px;border-radius:50%;background:var(--k-primary);margin-top:6px"></span></div>`).join('')}</div>
+ <div class="eyebrow">Yesterday</div><div class="card list"><div class="li" style="padding:14px 16px;align-items:flex-start"><span style="width:40px;height:40px;border-radius:12px;background:var(--k-warn-bg);color:var(--k-warn);display:flex;align-items:center;justify-content:center;font-size:20px"><i class="ri-eye-line"></i></span><div style="flex:1"><div style="font-weight:600;color:var(--k-text-2)">Ready for QC 2</div><div class="sub">Episode 42 – highlights cut · Orbit Podcast</div></div></div></div>`;
+const moreBody=`<div class="card" style="padding:16px;display:flex;gap:14px;align-items:center"><span class="av" style="width:56px;height:56px;font-size:20px">PM</span><div><div style="font:700 18px Outfit">Priya Mehta</div><div class="sub">priya@kontent.media</div><span class="stp" style="background:var(--k-primary-50);color:var(--k-primary-600);margin-top:4px">Owner</span></div></div>
+ <div class="eyebrow">Preferences</div><div class="card list"><div class="li"><i class="l ri-moon-line"></i>Dark mode<div class="sw"></div></div><div class="li"><i class="l ri-notification-badge-line"></i>Notification settings<span class="r"><i class="ri-arrow-right-s-line"></i></span></div></div>
+ <div class="eyebrow">Workspace</div><div class="card list">${[['ri-bar-chart-2-line','Analytics'],['ri-sparkling-2-line','Kontent Bot'],['ri-book-open-line','Brand kits'],['ri-group-line','Client pods'],['ri-user-settings-line','Users & roles'],['ri-plug-line','WhatsApp setup']].map(([i,l])=>`<div class="li"><i class="l ${i}"></i>${l}<span class="r"><i class="ri-arrow-right-s-line"></i></span></div>`).join('')}</div>
+ <div class="card list" style="margin-top:12px"><div class="li" style="color:var(--k-bad)"><i class="l ri-logout-box-r-line" style="color:var(--k-bad)"></i>Sign out</div></div>`;
+const loginBody=`<div style="height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 4px"><div style="display:flex;gap:10px;align-items:center;margin-bottom:28px"><div style="width:44px;height:44px;border-radius:12px;background:var(--k-primary);color:#fff;font:800 26px Outfit;display:flex;align-items:center;justify-content:center">K</div><div style="font:800 20px/1 Outfit">Kontent<small style="display:block;font:600 11px 'Plus Jakarta Sans';letter-spacing:.08em;text-transform:uppercase;color:var(--k-text-3);margin-top:3px">Media</small></div></div>
+ <h1 style="font-size:30px">Welcome back</h1><p class="sub" style="font-size:15px;margin:4px 0 24px">Sign in to your operations workspace.</p>
+ <div class="field" style="margin-bottom:16px"><label>Email</label><div class="in" style="border-color:var(--k-primary);box-shadow:0 0 0 3px rgba(127,0,255,.25);color:var(--k-text)"><i class="ri-mail-line"></i>name@kontent.media</div></div>
+ <div class="field" style="margin-bottom:20px"><label>Password</label><div class="in"><i class="ri-lock-2-line"></i>••••••••••<i class="ri-eye-line" style="margin-left:auto"></i></div></div>
+ <div class="pbtn" style="flex:none;height:54px;font-size:17px">Sign in</div><div class="sub" style="text-align:center;margin-top:16px">Trouble signing in? Ask your team lead to reset your password.</div></div>`;
+
+/* ---- screens ---- */
+pair('r-lead',{name:'Home',role:'lead',tab:0,large:'Overview',small:'Overview',nav:'<i class="ri-search-line"></i>',body:homeBody},'Large title collapses on scroll. Search lives in the bar; the + for a new job is on the Pipeline screen.');
+pair('r-lead',{name:'Pipeline · list',role:'lead',tab:1,large:'Pipeline',small:'Pipeline',nav:'<i class="ri-add-line"></i>',body:pipeBody,fab:'New job'},'Cards show the deadline first; swipe a card left for quick actions (open, reassign).');
+pair('r-lead',{name:'Pipeline · board',role:'lead',tab:1,large:'Pipeline',small:'Pipeline',nav:'<i class="ri-add-line"></i>',body:boardBody,fab:'New job'},'One stage at a time, chips show the real server totals. Same cards as the list.');
+pair('r-editor',{name:'My queue',role:'editor',tab:0,large:'My queue',small:'My queue',nav:'<i class="ri-search-line"></i>',body:queueBody},'The editor never sees the manager table: slots, then "Do now" with one button per card.');
+pair('r-qc',{name:'Queue',role:'qc',tab:0,large:'My QC queue',small:'My QC queue',body:qcBody},'Availability is a switch because it changes routing; groups are scrollable chips with counts.');
+pair('r-job',{name:'Job detail',role:'lead',tab:1,hideTabs:1,back:'Pipeline',small:'KM-0412',nav:'<i class="ri-more-2-fill"></i>',body:jobBody,bar:jobBar},'Tabs hide on detail screens; the next step is pinned above the home bar.');
+pair('r-job',{name:'Filters sheet',role:'lead',tab:1,large:'Pipeline',small:'Pipeline',body:pipeBody,sheet:filterSheet},'Bottom sheet with a grabber; drag down to dismiss. Pickers open as nested sheets.');
+pair('r-more',{name:'Inbox',role:'lead',tab:2,large:'Inbox',small:'Inbox',nav:'<i class="ri-check-double-line"></i>',body:notifBody},'Bold title + one dot for unread. Tap opens the job; swipe to mark read.');
+pair('r-more',{name:'More',role:'lead',tab:4,large:'More',small:'More',body:moreBody},'Everything secondary: profile, dark mode, notification settings, admin pages, sign out.');
+pair('r-login',{name:'Sign in',role:'lead',tab:0,hideTabs:1,body:loginBody});
+
+/* ---- toggles ---- */
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-p]').forEach(x=>x.classList.toggle('on',x===b));document.body.classList.remove('hide-ios','hide-and');if(b.dataset.p==='ios')document.body.classList.add('hide-and');if(b.dataset.p==='and')document.body.classList.add('hide-ios')});
+let dark=false;document.getElementById('th').onclick=function(){dark=!dark;document.body.classList.toggle('dark',dark);this.textContent='Theme: '+(dark?'Dark':'Light')};
+</script>
+</body>
+</html>

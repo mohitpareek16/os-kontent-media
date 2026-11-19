@@ -1,0 +1,327 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* iOS Safari zooms the page when a smaller form control takes focus. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   KONTENT MEDIA - REDESIGN SYSTEM (BRAND PRIMARY: #7F00FF)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand Core */
+  --primary: #7F00FF;
+  --primary-hover: #6D00DB;
+  --primary-light: #9D38FF;
+  --primary-glow: rgba(127, 0, 255, 0.4);
+  --primary-glow-subtle: rgba(127, 0, 255, 0.15);
+
+  /* Accents */
+  --accent-cyan: #00F2FE;
+  --accent-cyan-glow: rgba(0, 242, 254, 0.25);
+  --accent-green: #10B981;
+  --accent-green-bg: rgba(16, 185, 129, 0.12);
+  --accent-amber: #F59E0B;
+  --accent-amber-bg: rgba(245, 158, 11, 0.12);
+  --accent-red: #EF4444;
+  --accent-red-bg: rgba(239, 68, 68, 0.12);
+
+  /* Fonts */
+  --font-display: 'Outfit', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Dimensions */
+  --sidebar-width: 250px;
+  --top-header-height: 72px;
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+
+  /* LIGHT THEME (base default — applies unconditionally on :root, so it
+     must stay the FIRST theme block; [data-theme="dark"] below overrides it) */
+  --bg-app: #F6F4FA;
+  --bg-sidebar: rgba(255, 255, 255, 0.9);
+  --bg-header: rgba(255, 255, 255, 0.85);
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-hover: #FFFFFF;
+  --bg-panel-solid: #FFFFFF;
+  --bg-input: #F0ECF8;
+  --bg-pill: rgba(127, 0, 255, 0.06);
+
+  --border-color: rgba(127, 0, 255, 0.15);
+  --border-color-hover: rgba(127, 0, 255, 0.4);
+  --border-color-subtle: rgba(0, 0, 0, 0.06);
+
+  --text-main: #1A1528;
+  --text-muted: #6B7280;
+  --text-dim: #9CA3AF;
+
+  --shadow-card: 0 10px 30px -10px rgba(127, 0, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --backdrop-blur: blur(12px);
+}
+
+/* Explicit light selection (redundant with the :root default above, kept
+   for clarity when data-theme="light" is set explicitly) */
+[data-theme="light"] {
+  --bg-app: #F6F4FA;
+  --bg-sidebar: rgba(255, 255, 255, 0.9);
+  --bg-header: rgba(255, 255, 255, 0.85);
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-hover: #FFFFFF;
+  --bg-panel-solid: #FFFFFF;
+  --bg-input: #F0ECF8;
+  --bg-pill: rgba(127, 0, 255, 0.06);
+
+  --border-color: rgba(127, 0, 255, 0.15);
+  --border-color-hover: rgba(127, 0, 255, 0.4);
+  --border-color-subtle: rgba(0, 0, 0, 0.06);
+
+  --text-main: #1A1528;
+  --text-muted: #6B7280;
+  --text-dim: #9CA3AF;
+
+  --shadow-card: 0 10px 30px -10px rgba(127, 0, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --backdrop-blur: blur(12px);
+}
+
+/* --- Chart series palette ---------------------------------------------
+   Eight fixed categorical slots, assigned in order and never cycled — slot
+   1 is always the first series, whatever it is, so a filter that drops a
+   series never repaints the ones that remain.
+
+   The dark column is the same eight hues re-stepped for the dark surface,
+   not a second palette and not an automatic flip. Both columns were checked
+   as sets for colorblind separation, chroma and contrast against their own
+   surface. Do not hand-edit one value: the ordering is what makes adjacent
+   pairs distinguishable, so a change means re-validating all eight.
+
+   Slot 1 is the brand purple; slots 2-8 are a validated general-purpose
+   sequence. Eight is also the server-side cap on series per chart
+   (services/ai/tools/charts.py), so there is nothing to cycle for. */
+:root,
+[data-theme="light"] {
+  --series-1: #7F00FF;
+  --series-2: #EB6834;
+  --series-3: #1BAF7A;
+  --series-4: #EDA100;
+  --series-5: #E87BA4;
+  --series-6: #008300;
+  --series-7: #2A78D6;
+  --series-8: #E34948;
+  --chart-grid: rgba(0, 0, 0, 0.08);
+}
+
+/* DARK THEME (opt-in via data-theme="dark" — must come last to override the default) */
+[data-theme="dark"] {
+  --series-1: #9D38FF;
+  --series-2: #D95926;
+  --series-3: #199E70;
+  --series-4: #C98500;
+  --series-5: #D55181;
+  --series-6: #008300;
+  --series-7: #3987E5;
+  --series-8: #E66767;
+  --chart-grid: rgba(255, 255, 255, 0.09);
+
+  --bg-app: #0B0813;
+  --bg-sidebar: rgba(16, 11, 28, 0.85);
+  --bg-header: rgba(16, 11, 28, 0.75);
+  --bg-card: rgba(23, 16, 41, 0.65);
+  --bg-card-hover: rgba(33, 23, 59, 0.8);
+  --bg-panel-solid: #21173B;
+  --bg-input: rgba(30, 20, 52, 0.7);
+  --bg-pill: rgba(255, 255, 255, 0.06);
+
+  --border-color: rgba(127, 0, 255, 0.18);
+  --border-color-hover: rgba(127, 0, 255, 0.45);
+  --border-color-subtle: rgba(255, 255, 255, 0.08);
+
+  --text-main: #F3F0FC;
+  --text-muted: #9CA3AF;
+  --text-dim: #6B7280;
+
+  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px var(--primary-glow-subtle);
+  --backdrop-blur: blur(16px);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(127, 0, 255, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Glass Card */
+.glass-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: var(--backdrop-blur);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--border-color-hover);
+}
+
+.border-glow {
+  border-color: rgba(127, 0, 255, 0.4) !important;
+  box-shadow: 0 0 20px var(--primary-glow-subtle) !important;
+}
+
+/* Official Logo */
+.brand-logo-custom {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-display);
+  user-select: none;
+  padding: 4px 0;
+}
+
+.logo-big-k {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--text-main);
+  background: linear-gradient(135deg, #FFFFFF 0%, #E0CBFF 50%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 12px var(--primary-glow));
+}
+
+.logo-text-stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: -1px;
+}
+
+.logo-ontent {
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.6px;
+  line-height: 1;
+}
+
+.logo-media {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary-light);
+  text-align: right;
+  letter-spacing: 0.2px;
+  margin-top: 1px;
+  text-transform: uppercase;
+}
+
+/* Filmstrip */
+.filmstrip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.filmstrip-step {
+  height: 6px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.filmstrip-step.active {
+  width: 18px;
+  background-color: var(--primary);
+  box-shadow: 0 0 8px var(--primary-glow);
+}
+
+.filmstrip-step.done {
+  width: 10px;
+  background-color: rgba(127, 0, 255, 0.4);
+}
+
+.filmstrip-step.pending {
+  width: 10px;
+  background-color: var(--bg-pill);
+}
+
+/* WaBubbles */
+.wa-bubble {
+  background-color: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 10px;
+  border-top-left-radius: 2px;
+  padding: 12px 14px;
+  font-size: 12px;
+}
+
+.wa-bubble pre {
+  font-family: var(--font-sans);
+  white-space: pre-wrap;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0.4; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Avatar */
+.avatar-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  box-shadow: 0 2px 10px var(--primary-glow-subtle);
+}

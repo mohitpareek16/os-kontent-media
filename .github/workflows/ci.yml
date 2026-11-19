@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  pull_request: {}
+  push:
+    branches: [master]
+
+# Only one CI run per branch/PR — newer pushes cancel older, still-running checks.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+
+    # The suite runs the real request path against a real Postgres — the
+    # models use Postgres-only types and job codes come from a Postgres
+    # sequence, so there is no SQLite fallback (tests/conftest.py says so in
+    # as many words). Without this service every test errored on connect and
+    # the backend job had been failing on every push for weeks, which meant
+    # CI was reporting nothing about the backend at all.
+    #
+    # Credentials and port match tests/conftest.py's defaults. conftest drops
+    # and recreates `kontent_test` itself, so it connects to the `postgres`
+    # database first — which is why POSTGRES_DB is left at its default rather
+    # than being pointed at the test database.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: kontent
+          POSTGRES_PASSWORD: kontent
+        ports:
+          - 5432:5432
+        # Without the health check the steps start before Postgres is
+        # accepting connections, which fails exactly like having no database
+        # at all — intermittently, which is worse.
+        options: >-
+          --health-cmd "pg_isready -U kontent"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          # Matches the base image in backend/Dockerfile (python:3.12-slim).
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # pytest is not an app dependency, so it is installed for CI only
+          # rather than being added to requirements.txt.
+          pip install pytest
+
+      # NOTE: no linter is configured in this project yet. If ruff is ever added
+      # to requirements.txt, add a `ruff check .` step here.
+
+      - name: Run tests
+        # Tests live in backend/tests/ and are still being written. pytest exits
+        # with code 5 when it collects no tests — treat that as a pass so the
+        # job only fails on real test failures.
+        run: pytest --maxfail=1 -q || [ $? -eq 5 ]
+        env:
+          TEST_PG_HOST: localhost
+          TEST_PG_PORT: 5432
+          TEST_PG_USER: kontent
+          TEST_PG_PASSWORD: kontent
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          # Matches the build stage in frontend/Dockerfile (node:20-alpine).
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Type errors and build failures are hard gates — a red build blocks merge.
+      - name: Type check
+        run: npx tsc -b
+
+      - name: Build
+        run: npm run build

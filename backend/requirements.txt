@@ -1,0 +1,30 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+sqlalchemy[asyncio]==2.0.35
+tzdata==2026.5; platform_system == "Windows"
+asyncpg==0.31.0
+alembic==1.13.2
+pydantic==2.9.2
+pydantic-settings==2.5.2
+email-validator==2.2.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+python-multipart==0.0.9
+python-dotenv==1.0.1
+# Application dependency since Phase 3: services/ai/openrouter.py calls the
+# OpenRouter gateway with it. It was already here for the test client.
+httpx==0.28.1
+
+# Web Push (desktop notifications that arrive with no tab open). Pulls in
+# py-vapid and http-ece; `cryptography` was already here via python-jose.
+# The library is synchronous — `services/push.py` runs every send through a
+# worker thread rather than blocking the event loop on somebody else's
+# network.
+pywebpush==2.5.0
+
+# --- tests only (not imported by app/) ---
+# The suite runs the real request path against a real Postgres database, so
+# it needs no extra driver: asyncpg and alembic above build and talk to it.
+pytest==9.1.1
+pytest-asyncio==1.4.0

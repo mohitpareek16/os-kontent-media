@@ -1,0 +1,91 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run app (docker compose up --build)",
+      "type": "shell",
+      "command": "docker compose up --build",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^never-matches$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Building.*$",
+          "endsPattern": "^.*(Uvicorn running|Started server process|error).*$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Stop app (docker compose down)",
+      "type": "shell",
+      "command": "docker compose down",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "group": "build"
+    },
+    {
+      "label": "Rebuild app only",
+      "type": "shell",
+      "command": "docker compose up -d --build app",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "group": "build"
+    },
+    {
+      "label": "Run DB migrations",
+      "type": "shell",
+      "command": "docker compose exec app alembic upgrade head",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "group": "build"
+    },
+    {
+      "label": "Bootstrap owner user",
+      "type": "shell",
+      "command": "docker compose exec app python -m scripts.create_owner \"${input:ownerName}\" \"${input:ownerEmail}\" \"${input:ownerPassword}\"",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "group": "build"
+    },
+    {
+      "label": "View logs (all services)",
+      "type": "shell",
+      "command": "docker compose logs -f",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "group": "build"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "ownerName",
+      "type": "promptString",
+      "description": "Owner name",
+      "default": "Mukul"
+    },
+    {
+      "id": "ownerEmail",
+      "type": "promptString",
+      "description": "Owner email",
+      "default": "mukul@kontent.media"
+    },
+    {
+      "id": "ownerPassword",
+      "type": "promptString",
+      "description": "Owner password",
+      "password": true
+    }
+  ]
+}

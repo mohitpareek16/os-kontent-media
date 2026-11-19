@@ -1,0 +1,71 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch: {}
+
+# Prevent overlapping deploys if pushes land close together.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      # deploy/deploy.sh sends the [1/4]..[4/4] progress messages once it is
+      # running on the server. This one covers the window before that — if the
+      # SSH step fails, deploy.sh never runs and Telegram would stay silent.
+      - name: Notify Telegram — deploy triggered
+        if: env.TG_TOKEN != ''
+        run: |
+          curl -sS -m 15 -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TG_CHAT}" \
+            --data-urlencode "text=🔔 Deploy triggered
+          Commit: ${GITHUB_SHA:0:7} — ${COMMIT_MSG}
+          By: ${GITHUB_ACTOR}
+          Logs: ${RUN_URL}" > /dev/null
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # Fail loudly here rather than as an opaque "Permission denied" later:
+          # a truncated or re-wrapped SSH_PRIVATE_KEY secret only shows up as
+          # "error in libcrypto" at connect time, which reads like an auth issue.
+          ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null \
+            || { echo "::error::SSH_PRIVATE_KEY secret is not a valid private key"; exit 1; }
+          ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Run deploy script on server
+        # The server restricts this key to deploy/deploy.sh via a forced
+        # command in authorized_keys (see docs/10-deployment-guide.md) —
+        # whatever runs here, the server only ever executes that script.
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${{ secrets.SSH_PORT || 22 }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "deploy"
+
+      # deploy.sh reports its own failures once it is running, but it cannot
+      # report the cases that stop the job before or outside of it.
+      - name: Notify Telegram — workflow failed
+        if: failure() && env.TG_TOKEN != ''
+        run: |
+          curl -sS -m 15 -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TG_CHAT}" \
+            --data-urlencode "text=❌ Deploy FAILED (GitHub Actions)
+          Commit: ${GITHUB_SHA:0:7}
+          Failed step: ${{ job.status }} — see logs
+          Logs: ${RUN_URL}" > /dev/null

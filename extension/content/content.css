@@ -1,0 +1,18 @@
+/*
+ * Kontent Voice Notes — Content CSS
+ *
+ * This file is intentionally minimal because the real styles live inside
+ * the Shadow DOM (injected by content.js).  This outer stylesheet only
+ * ensures the host element doesn't interfere with the page.
+ */
+
+#kvn-root {
+  /* Already set inline; this is a safety net. */
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  z-index: 2147483647 !important;
+  pointer-events: none !important;
+}

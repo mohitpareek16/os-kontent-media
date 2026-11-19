@@ -1,0 +1,549 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* iOS Safari zooms the page when a smaller form control takes focus. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   KONTENT MEDIA - DESIGN SYSTEM (BRAND PRIMARY: #7F00FF)
+
+   Every colour in the app comes from a variable defined here, for both
+   themes. Text colours were re-measured against WCAG 2.1 AA (4.5:1): the old
+   --text-dim (2.5:1) and the bare Tailwind 300-600 palette shades (1.5-3.2:1
+   on the light theme) are replaced below. See design-review/ for the spec.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand Core */
+  --primary: #7F00FF;
+  --primary-hover: #6D00DB;
+  /* "primary as text/icon": readable on both surfaces (was #9D38FF) */
+  --primary-light: #6D00DB;
+  --primary-text: #6D00DB;
+  --primary-glow: rgba(127, 0, 255, 0.4);
+  --primary-glow-subtle: rgba(127, 0, 255, 0.1);
+
+  /* Accents - text-safe on their own tint (light theme) */
+  --accent-cyan: #0E7490;
+  --accent-green: #047857;
+  --accent-green-bg: #E2F7F0;
+  --accent-amber: #92400E;
+  --accent-amber-bg: #FEF1DD;
+  --accent-red: #B91C1C;
+  --accent-red-bg: #FDECEC;
+
+  /* Semantic text + tint pairs (same values, intention-revealing names) */
+  --ok-text: #047857;
+  --ok-bg: #E2F7F0;
+  --warn-text: #92400E;
+  --warn-bg: #FEF1DD;
+  --bad-text: #B91C1C;
+  --bad-bg: #FDECEC;
+
+  /* Focus */
+  --focus-ring: 0 0 0 3px rgba(127, 0, 255, 0.28);
+
+  /* Fonts */
+  --font-display: 'Outfit', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Dimensions */
+  --sidebar-width: 248px;
+  --top-header-height: 68px;
+  --border-radius: 14px;
+  --border-radius-sm: 10px;
+
+  /* LIGHT THEME (base default - must stay the FIRST theme block;
+     [data-theme="dark"] below overrides it) */
+  --bg-app: #F7F6FB;
+  --bg-sidebar: #FFFFFF;
+  --bg-header: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FAF9FD;
+  --bg-panel-solid: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --bg-pill: #F6EEFF;
+
+  --border-color: #E6E2F0;
+  --border-color-hover: #7F00FF;
+  --border-color-subtle: #EEEAF5;
+
+  --text-main: #1A1528;
+  --text-muted: #4B4760;
+  --text-dim: #6B6785;
+
+  --shadow-card: 0 1px 2px rgba(26, 21, 40, 0.05), 0 1px 3px rgba(26, 21, 40, 0.04);
+  --shadow-pop: 0 8px 24px -8px rgba(26, 21, 40, 0.18);
+  --backdrop-blur: none;
+
+  /* Stage colours: text on tint, all >= 4.8:1 */
+  --stage-intake-fg: #4B5563;   --stage-intake-bg: #EDEEF0;
+  --stage-assigned-fg: #1D4ED8; --stage-assigned-bg: #E9EFFD;
+  --stage-editing-fg: #0F766E;  --stage-editing-bg: #E7F4F3;
+  --stage-qc1-fg: #6D28D9;      --stage-qc1-bg: #F2EBFD;
+  --stage-qc2-fg: #92400E;      --stage-qc2-bg: #FEF1DD;
+  --stage-revisions-fg: #B91C1C;--stage-revisions-bg: #FDECEC;
+  --stage-final-fg: #075985;    --stage-final-bg: #E2F4FC;
+  --stage-delivered-fg: #047857;--stage-delivered-bg: #E2F7F0;
+
+  /* Tailwind palette shades 300-600 as RGB triples (see tailwind.config.js).
+     Light theme maps them to their 700 shade so every `text-amber-400`-style
+     class in the codebase is readable on white. */
+  --c-amber-300: 180 83 9;    --c-amber-400: 180 83 9;    --c-amber-500: 180 83 9;    --c-amber-600: 180 83 9;
+  --c-emerald-300: 4 120 87;  --c-emerald-400: 4 120 87;  --c-emerald-500: 4 120 87;  --c-emerald-600: 4 120 87;
+  --c-rose-300: 190 18 60;    --c-rose-400: 190 18 60;    --c-rose-500: 190 18 60;    --c-rose-600: 190 18 60;
+  --c-purple-300: 126 34 206; --c-purple-400: 126 34 206; --c-purple-500: 126 34 206; --c-purple-600: 126 34 206;
+  --c-indigo-300: 67 56 202;  --c-indigo-400: 67 56 202;  --c-indigo-500: 67 56 202;  --c-indigo-600: 67 56 202;
+  --c-teal-300: 15 118 110;   --c-teal-400: 15 118 110;   --c-teal-500: 15 118 110;   --c-teal-600: 15 118 110;
+  --c-sky-300: 3 105 161;     --c-sky-400: 3 105 161;     --c-sky-500: 3 105 161;     --c-sky-600: 3 105 161;
+  --c-violet-300: 109 40 217; --c-violet-400: 109 40 217; --c-violet-500: 109 40 217; --c-violet-600: 109 40 217;
+  --c-cyan-300: 14 116 144;   --c-cyan-400: 14 116 144;   --c-cyan-500: 14 116 144;   --c-cyan-600: 14 116 144;
+  --c-orange-300: 194 65 12;  --c-orange-400: 194 65 12;  --c-orange-500: 194 65 12;  --c-orange-600: 194 65 12;
+}
+
+/* Explicit light selection (redundant with the :root default above, kept for
+   clarity when data-theme="light" is set explicitly). Only the values that
+   differ from dark need restating here; everything is inherited from :root. */
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* --- Chart series palette ---------------------------------------------
+   Eight fixed categorical slots, assigned in order and never cycled - slot
+   1 is always the first series, whatever it is, so a filter that drops a
+   series never repaints the ones that remain.
+
+   The dark column is the same eight hues re-stepped for the dark surface,
+   not a second palette and not an automatic flip. Both columns were checked
+   as sets for colorblind separation, chroma and contrast against their own
+   surface. Do not hand-edit one value: the ordering is what makes adjacent
+   pairs distinguishable, so a change means re-validating all eight.
+
+   Slot 1 is the brand purple; slots 2-8 are a validated general-purpose
+   sequence. Eight is also the server-side cap on series per chart
+   (services/ai/tools/charts.py), so there is nothing to cycle for. */
+:root,
+[data-theme="light"] {
+  --series-1: #7F00FF;
+  --series-2: #EB6834;
+  --series-3: #1BAF7A;
+  --series-4: #EDA100;
+  --series-5: #E87BA4;
+  --series-6: #008300;
+  --series-7: #2A78D6;
+  --series-8: #E34948;
+  --chart-grid: rgba(0, 0, 0, 0.08);
+}
+
+/* DARK THEME (opt-in via data-theme="dark" - must come last to override the default) */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --series-1: #9D38FF;
+  --series-2: #D95926;
+  --series-3: #199E70;
+  --series-4: #C98500;
+  --series-5: #D55181;
+  --series-6: #008300;
+  --series-7: #3987E5;
+  --series-8: #E66767;
+  --chart-grid: rgba(255, 255, 255, 0.09);
+
+  --primary: #8F3EFF; /* white text on it = 5:1 */
+  --primary-hover: #7F00FF;
+  --primary-light: #C4A0FF;
+  --primary-text: #C4A0FF;
+  --primary-glow: rgba(161, 92, 255, 0.4);
+  --primary-glow-subtle: rgba(161, 92, 255, 0.16);
+
+  --accent-cyan: #5EEAD4;
+  --accent-green: #4ADE9F;
+  --accent-green-bg: rgba(74, 222, 159, 0.12);
+  --accent-amber: #FBBF5C;
+  --accent-amber-bg: rgba(251, 191, 92, 0.12);
+  --accent-red: #FF8A8A;
+  --accent-red-bg: rgba(255, 138, 138, 0.12);
+
+  --ok-text: #4ADE9F;
+  --ok-bg: rgba(74, 222, 159, 0.12);
+  --warn-text: #FBBF5C;
+  --warn-bg: rgba(251, 191, 92, 0.12);
+  --bad-text: #FF8A8A;
+  --bad-bg: rgba(255, 138, 138, 0.12);
+
+  --focus-ring: 0 0 0 3px rgba(161, 92, 255, 0.4);
+
+  --bg-app: #0E0B18;
+  --bg-sidebar: #17122A;
+  --bg-header: #17122A;
+  --bg-card: #17122A;
+  --bg-card-hover: #1C1632;
+  --bg-panel-solid: #1C1632;
+  --bg-input: #1C1632;
+  --bg-pill: #241A3F;
+
+  --border-color: #2B2445;
+  --border-color-hover: #A15CFF;
+  --border-color-subtle: #241E3A;
+
+  --text-main: #F3F0FC;
+  --text-muted: #C4BFD9;
+  --text-dim: #9A94B5;
+
+  --shadow-card: none;
+  --shadow-pop: 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+  --backdrop-blur: none;
+
+  --stage-intake-fg: #C4BFD9;   --stage-intake-bg: rgba(255, 255, 255, 0.08);
+  --stage-assigned-fg: #9DB8FF; --stage-assigned-bg: rgba(96, 140, 255, 0.16);
+  --stage-editing-fg: #5EEAD4;  --stage-editing-bg: rgba(45, 212, 191, 0.14);
+  --stage-qc1-fg: #C4B5FD;      --stage-qc1-bg: rgba(167, 139, 250, 0.16);
+  --stage-qc2-fg: #FBBF5C;      --stage-qc2-bg: rgba(251, 191, 92, 0.14);
+  --stage-revisions-fg: #FF8A8A;--stage-revisions-bg: rgba(255, 138, 138, 0.14);
+  --stage-final-fg: #7DD3FC;    --stage-final-bg: rgba(56, 189, 248, 0.14);
+  --stage-delivered-fg: #4ADE9F;--stage-delivered-bg: rgba(74, 222, 159, 0.14);
+
+  /* Dark theme keeps the stock Tailwind 300-600 shades */
+  --c-amber-300: 252 211 77;   --c-amber-400: 251 191 36;   --c-amber-500: 245 158 11;   --c-amber-600: 217 119 6;
+  --c-emerald-300: 110 231 183; --c-emerald-400: 52 211 153; --c-emerald-500: 16 185 129; --c-emerald-600: 5 150 105;
+  --c-rose-300: 253 164 175;   --c-rose-400: 251 113 133;   --c-rose-500: 244 63 94;     --c-rose-600: 225 29 72;
+  --c-purple-300: 216 180 254; --c-purple-400: 192 132 252; --c-purple-500: 168 85 247;  --c-purple-600: 147 51 234;
+  --c-indigo-300: 165 180 252; --c-indigo-400: 129 140 248; --c-indigo-500: 99 102 241;  --c-indigo-600: 79 70 229;
+  --c-teal-300: 94 234 212;    --c-teal-400: 45 212 191;    --c-teal-500: 20 184 166;    --c-teal-600: 13 148 136;
+  --c-sky-300: 125 211 252;    --c-sky-400: 56 189 248;     --c-sky-500: 14 165 233;     --c-sky-600: 2 132 199;
+  --c-violet-300: 196 181 253; --c-violet-400: 167 139 250; --c-violet-500: 139 92 246;  --c-violet-600: 124 58 237;
+  --c-cyan-300: 103 232 249;   --c-cyan-400: 34 211 238;    --c-cyan-500: 6 182 212;     --c-cyan-600: 8 145 178;
+  --c-orange-300: 253 186 116; --c-orange-400: 251 146 60;  --c-orange-500: 249 115 22;  --c-orange-600: 234 88 12;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+/* Keyboard focus: one visible ring for every interactive element. */
+:where(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Respect the OS "reduce motion" setting. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+
+/* Card: solid surface, 1px border. Interactive cards opt in to the hover
+   state with `.card-interactive`; plain cards do not change on hover. */
+.glass-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-card);
+}
+
+.card-interactive {
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.card-interactive:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-pop);
+}
+
+/* "Selected" - the one selected-card style (was a purple glow + !important). */
+.border-glow {
+  border-color: var(--primary);
+  box-shadow: var(--focus-ring);
+}
+
+/* Brand mark */
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  user-select: none;
+}
+.brand-mark__k {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+}
+.brand-mark__text {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+.brand-mark__text small {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Numbers: display face with tabular figures (mono is for codes only). */
+.num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Filmstrip */
+.filmstrip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.filmstrip-step {
+  height: 6px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.filmstrip-step.active {
+  width: 18px;
+  background-color: var(--primary);
+}
+
+.filmstrip-step.done {
+  width: 10px;
+  background-color: var(--primary-glow);
+}
+
+.filmstrip-step.pending {
+  width: 10px;
+  background-color: var(--bg-pill);
+}
+
+/* WaBubbles */
+.wa-bubble {
+  background-color: var(--ok-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  border-top-left-radius: 2px;
+  padding: 12px 14px;
+  font-size: 13px;
+}
+
+.wa-bubble pre {
+  font-family: var(--font-sans);
+  white-space: pre-wrap;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0.4; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--border-color) 25%, var(--bg-card-hover) 50%, var(--border-color) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+/* Avatar: neutral tint, brand text (no per-role gradients). */
+.avatar-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--primary-text);
+  background: var(--bg-pill);
+}
+
+/* Data tables: sticky header, 14px cells. */
+.k-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  font-size: 14px;
+}
+.k-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 44px;
+  padding: 0 16px;
+  background: var(--bg-card-hover);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.k-table tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color-subtle);
+  vertical-align: middle;
+}
+.k-table tbody tr:hover td {
+  background: var(--bg-card-hover);
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE / INSTALLED APP
+   Safe areas (notch, home indicator), no accidental zoom or rubber-band, and
+   a bottom-sheet entrance. Only has an effect on devices that report insets.
+   -------------------------------------------------------------------------- */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --tabbar-h: 56px;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  overscroll-behavior-y: none;
+}
+
+button,
+[role="button"],
+a {
+  touch-action: manipulation;
+}
+
+@media (max-width: 767px) {
+  /* App feel: no text selection on controls, no callout on long-press. */
+  button,
+  nav,
+  [role="tab"] {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0.6; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* When launched from the home screen there is no browser chrome. */
+@media (display-mode: standalone) {
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  input,
+  textarea,
+  [contenteditable] {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Motion: only what helps people understand a change.
+   Short (<=150ms), no delays, nothing that makes content wait.
+------------------------------------------------------------------ */
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur-base: 160ms;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+/* Dialogs and menus appear where they were opened. */
+[role="dialog"], [role="menu"], [role="listbox"] {
+  animation: popIn var(--dur-base) var(--ease-out) both;
+}
+/* Tactile press feedback on buttons only. */
+button:not(:disabled):active { transform: scale(0.98); }
+button {
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: var(--dur-fast);
+}
+.k-table tbody tr { transition: background-color var(--dur-fast) ease; }

@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "Kontent Voice Notes for Frame.io",
+  "version": "1.4.0",
+  "description": "Record timestamped voice notes while reviewing videos on Frame.io. Notes are stored on your team server and shared with everyone who has the extension.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "kontent-voice-notes@kontent.media",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["personallyIdentifyingInfo", "personalCommunications"]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://app.frame.io/*",
+    "https://next.frame.io/*",
+    "https://f.io/*",
+    "https://ops.kontentmedia.in/*"
+  ],
+  "optional_host_permissions": ["https://ops.kontentmedia.in/*"],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Kontent Voice Notes — Settings",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://app.frame.io/*",
+        "https://next.frame.io/*",
+        "https://f.io/*"
+      ],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "all_frames": true,
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "scripts": ["background/service-worker.js"]
+  }
+}
