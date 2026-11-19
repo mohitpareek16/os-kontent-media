@@ -198,7 +198,7 @@ export function MobileShell({
         <nav
           aria-label="Main"
           className={`fixed inset-x-0 bottom-0 z-40 flex border-t border-[var(--border-color)] ${
-            ios ? "bg-[color-mix(in_srgb,var(--bg-card)_94%,transparent)]" : "bg-[var(--bg-pill)]"
+            "bg-[var(--bg-header)]"
           }`}
           style={{ paddingBottom: "var(--safe-bottom)" }}
         >

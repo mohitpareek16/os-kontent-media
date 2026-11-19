@@ -1,7 +1,7 @@
 {
   "name": "Kontent OS",
   "short_name": "Kontent",
-  "description": "Content operations: pipeline, QC and delivery for Kontent Media.",
+  "description": "Content operations: pipeline, QC and delivery for Kontent OS.",
   "id": "/",
   "start_url": "/?source=pwa",
   "scope": "/",

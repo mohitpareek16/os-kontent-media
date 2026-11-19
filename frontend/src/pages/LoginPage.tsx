@@ -37,7 +37,7 @@ export default function LoginPage() {
   return (
     <div className="grid min-h-[100dvh] bg-[var(--bg-app)] lg:grid-cols-2">
       {/* Brand panel — desktop only. The one place a soft glow is allowed. */}
-      <div className="relative hidden flex-col justify-between overflow-hidden bg-[#1A1528] p-14 text-white lg:flex">
+      <div className="relative hidden flex-col justify-between overflow-hidden bg-black p-14 text-white lg:flex">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full"
@@ -50,21 +50,21 @@ export default function LoginPage() {
           <h2 className="max-w-[520px] text-[44px] font-bold leading-[1.1]">
             Every video, from brief to delivery.
           </h2>
-          <p className="mt-4 max-w-[480px] text-base text-[#C4BFD9]">
+          <p className="mt-4 max-w-[480px] text-base text-[#A1A1AA]">
             Assign editors, run two-pass QC and keep every client on deadline from one workspace.
           </p>
           <ul className="mt-8 flex flex-wrap gap-1.5" aria-label="Pipeline stages">
             {PIPELINE_STAGES.map((stage) => (
               <li
                 key={stage}
-                className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-[#E9E5FA]"
+                className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-[#E4E4E7]"
               >
                 {stage}
               </li>
             ))}
           </ul>
         </div>
-        <p className="relative text-[13px] text-[#9A94B5]">© Kontent Media</p>
+        <p className="relative text-[13px] text-[#8A8A93]">© Kontent OS</p>
       </div>
 
       {/* Form */}

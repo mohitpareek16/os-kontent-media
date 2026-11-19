@@ -39,22 +39,27 @@ export function SearchableSelect({ value, onChange, options, placeholder, disabl
 
   useEffect(() => {
     if (!open) return;
-    input.current?.focus();
+    /* Don't auto-focus the search box on touch screens: the on-screen keyboard
+       it opens resizes the viewport, which used to close the list instantly. */
+    if (!window.matchMedia("(pointer: coarse)").matches) input.current?.focus();
+    const startWidth = window.innerWidth;
+    const closeOnResize = () => { if (window.innerWidth !== startWidth) setOpen(false); };
     const close = (event: MouseEvent) => {
       if (!root.current?.contains(event.target as Node) && !popup.current?.contains(event.target as Node)) setOpen(false);
     };
-    const onScroll = (event: Event) => { if (!popup.current?.contains(event.target as Node)) setOpen(false); };
+    const openedAt = Date.now();
+    const onScroll = (event: Event) => { if (Date.now() - openedAt > 500 && !popup.current?.contains(event.target as Node)) setOpen(false); };
+    document.addEventListener("pointerdown", close as EventListener);
     document.addEventListener("mousedown", close);
     window.addEventListener("scroll", onScroll, true);
     window.addEventListener("resize", closeOnResize);
     return () => {
+      document.removeEventListener("pointerdown", close as EventListener);
       document.removeEventListener("mousedown", close);
       window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", closeOnResize);
     };
   }, [open]);
-
-  const closeOnResize = () => setOpen(false);
 
   const show = () => {
     const rect = root.current?.getBoundingClientRect();

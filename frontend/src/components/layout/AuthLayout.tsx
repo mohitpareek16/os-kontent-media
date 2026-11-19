@@ -8,7 +8,7 @@ import { BrandMark } from "@/components/layout/BrandMark";
 export function AuthLayout({ headline, children }: { headline: string; children: ReactNode }) {
   return (
     <div className="grid min-h-[100dvh] bg-[var(--bg-app)] lg:grid-cols-2">
-      <div className="relative hidden flex-col justify-between overflow-hidden bg-[#1A1528] p-12 text-white lg:flex">
+      <div className="relative hidden flex-col justify-between overflow-hidden bg-black p-12 text-white lg:flex">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full"
@@ -18,7 +18,7 @@ export function AuthLayout({ headline, children }: { headline: string; children:
           <BrandMark light />
         </div>
         <h2 className="relative max-w-[420px] text-4xl font-bold leading-[1.15]">{headline}</h2>
-        <p className="relative text-[13px] text-[#9A94B5]">© Kontent Media</p>
+        <p className="relative text-[13px] text-[#8A8A93]">© Kontent OS</p>
       </div>
       <div className="flex items-center justify-center bg-[var(--bg-card)] p-6 sm:p-10">
         <div className="w-full max-w-[380px]">

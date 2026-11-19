@@ -226,7 +226,7 @@ export function AppLayout() {
       ([path]) => location.pathname === path || location.pathname.startsWith(`${path}/`),
     );
     if (match) return match[1];
-    return "Kontent Media";
+    return "Kontent OS";
   })();
 
   /** Only client-scoped views need "which pod am I looking at" context —
@@ -383,7 +383,7 @@ export function AppLayout() {
 
         {/* Sidebar Header with Official Logo */}
         <div className="border-b border-[var(--border-color)] px-5 py-[18px]">
-          <Link to="/" aria-label="Kontent Media — home" onClick={() => setMobileNavOpen(false)} className="inline-flex select-none">
+          <Link to="/" aria-label="Kontent OS — home" onClick={() => setMobileNavOpen(false)} className="inline-flex select-none">
             <BrandMark />
           </Link>
 
