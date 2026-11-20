@@ -243,15 +243,15 @@ function AttentionCard({
     <button
       type="button"
       onClick={onClick}
-      className={`glass-card card-interactive flex flex-col gap-1 border-l-4 p-5 text-left ${accent.border}`}
+      className={`glass-card card-interactive flex flex-col gap-1 border-l-4 p-5 text-left max-md:grid max-md:grid-cols-[1fr_auto] max-md:items-center max-md:gap-x-4 max-md:p-4 ${accent.border}`}
     >
       <span className="flex items-center justify-between text-sm font-bold text-[var(--text-muted)]">
         {label}
-        <i className={`${icon} text-xl ${tone === "none" ? "text-[var(--text-dim)]" : accent.text}`} />
+        <i className={`${icon} text-xl max-md:hidden ${tone === "none" ? "text-[var(--text-dim)]" : accent.text}`} />
       </span>
-      <span className={`num mt-1.5 text-[44px] font-bold leading-[1.1] ${accent.text}`}>{value}</span>
+      <span className={`num mt-1.5 text-[44px] font-bold leading-[1.1] max-md:col-start-2 max-md:row-span-2 max-md:row-start-1 max-md:mt-0 max-md:text-[34px] ${accent.text}`}>{value}</span>
       <span className="text-[13px] text-[var(--text-dim)]">{description}</span>
-      <span className="mt-2 flex items-center gap-1 text-[13px] font-bold text-[var(--primary-text)]">
+      <span className="mt-2 flex items-center gap-1 text-[13px] font-bold text-[var(--primary-text)] max-md:hidden">
         Open in pipeline <i className="ri-arrow-right-line" />
       </span>
     </button>
@@ -278,14 +278,14 @@ function StripCell({
   title?: string;
 }) {
   const className =
-    "block w-full p-5 text-left transition-colors hover:bg-[var(--bg-card-hover)] first:rounded-l-[14px] last:rounded-r-[14px]";
+    "block w-full p-5 text-left max-md:p-4 transition-colors hover:bg-[var(--bg-card-hover)] first:rounded-l-[14px] last:rounded-r-[14px]";
   const body = (
     <>
       <span className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--text-dim)]">
         <i className={icon} /> {label}
       </span>
       <span className="num mt-0.5 block text-[30px] font-bold leading-tight text-[var(--text-main)]">{value}</span>
-      <span className="block text-xs text-[var(--text-dim)]">{hint}</span>
+      <span className="block text-xs text-[var(--text-dim)] max-md:hidden">{hint}</span>
     </>
   );
   return to ? (
@@ -299,100 +299,61 @@ function StripCell({
   );
 }
 
-/** A job as a phone card: everything the table row shows — title, code, type,
- * rush, cut link, flags, whose move, client and channel, editor, QC reviewer,
- * deadline (and the actual one), rounds, and scrapped by/why. */
+/** A job as a phone card: three short lines and nothing to decode.
+ * 1) title + stage, 2) client and code, 3) who has it and when it is due.
+ * Everything else (channel, type, rounds, actual deadline, whose move, scrap
+ * reason) is one tap away in the job sheet, and unchanged there. */
 function MobileJobCard({
   job: j,
   typeLabel,
   onSelect,
   selected,
+  hideStage = false,
 }: {
   job: JobDetail;
   typeLabel: string;
   onSelect: () => void;
   selected: boolean;
+  hideStage?: boolean;
 }) {
   const due = deadlineInfo(j.deadline, j.stage);
+  const who = j.stage === "qc2" ? j.qc2_reviewer_name : j.editor_name;
   return (
     <button
       type="button"
       onClick={onSelect}
-      className={`flex w-full flex-col gap-2.5 rounded-2xl border border-[var(--border-color)] p-4 text-left shadow-[var(--shadow-card)] ${jobCardClass(j)} ${
+      aria-label={`${j.title}, ${j.pod_name}, ${due.label}`}
+      className={`flex w-full flex-col gap-2 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] p-4 text-left ${jobCardClass(j)} ${
         selected ? "ring-2 ring-[var(--primary)]" : ""
       }`}
     >
       <div className="flex items-start justify-between gap-3">
-        <span className={`text-base font-bold leading-snug ${j.scrapped_at ? "line-through" : ""}`}>{j.title}</span>
-        <StageBadge stage={j.stage} />
+        <span className={`text-[15px] font-semibold leading-snug ${j.scrapped_at ? "line-through" : ""}`}>{j.title}</span>
+        {!hideStage && <StageBadge stage={j.stage} />}
       </div>
-      <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-dim)]">
-        <span className="font-mono">{j.code}</span>
-        <span className={`inline-flex h-5 items-center rounded-md px-1.5 font-bold ${videoTypeClass(j.video_type)}`}>{typeLabel}</span>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[var(--text-dim)]">
+        <span>{j.pod_name}</span>
+        <span aria-hidden>·</span>
+        <span className="font-mono text-xs">{j.code}</span>
         <RushBadge rush={j.rush} />
-        {j.frame_link && <i className="ri-film-line" title="A cut is linked" />}
-        <span>Next: {STAGE_OWNERS[j.stage]}</span>
-        {j.is_mine && <span className="font-bold text-[var(--primary-text)]">Waiting on you</span>}
-        {j.qc1_flagged_at && (
-          <span className="flex items-center gap-1 font-bold text-[var(--warn-text)]">
-            <i className="ri-flag-2-fill" /> QC1 flagged
-          </span>
-        )}
+        {j.qc1_flagged_at && <i className="ri-flag-2-fill text-[var(--warn-text)]" title="QC1 flagged" />}
+        {j.is_mine && <span className="font-semibold text-[var(--primary-text)]">Your move</span>}
       </div>
-      <div className="text-[13px] text-[var(--text-muted)]">
-        {j.pod_name} · {j.channel_name ?? "Not filed"}
-      </div>
-      <dl className="grid grid-cols-2 gap-3 border-t border-[var(--border-color-subtle)] pt-2.5 text-[13px]">
-        <div className="min-w-0">
-          <dt className="text-xs text-[var(--text-dim)]">Editor</dt>
-          <dd className="flex items-center gap-1.5 font-semibold">
-            {j.editor_name ? (
-              <>
-                <Avatar name={j.editor_name} size={24} />
-                <span className="truncate">{j.editor_name}</span>
-              </>
-            ) : (
-              <span className="text-[var(--text-dim)]">Unassigned</span>
-            )}
-          </dd>
-        </div>
-        <div className="min-w-0">
-          <dt className="text-xs text-[var(--text-dim)]">QC reviewer</dt>
-          <dd className="flex items-center gap-1.5 font-semibold">
-            {j.qc2_reviewer_name ? (
-              <>
-                <Avatar name={j.qc2_reviewer_name} size={24} />
-                <span className="truncate">{j.qc2_reviewer_name}</span>
-              </>
-            ) : (
-              <span className="text-[var(--text-dim)]">Not routed</span>
-            )}
-          </dd>
-        </div>
-      </dl>
-      <div className="flex items-center justify-between gap-2">
-        <span>
-          <span className={`inline-flex h-7 items-center gap-1 rounded-md px-2 text-[13px] font-bold ${DEADLINE_CHIP_CLASSES[due.tone]}`}>
-            <i className={DEADLINE_CHIP_ICONS[due.tone]} /> {due.label}
-          </span>
-          <span className="mt-0.5 block text-xs text-[var(--text-dim)]">
-            {j.deadline ? formatFullDate(j.deadline) : "No deadline"}
-            {j.client_deadline && <> · actual {formatFullDate(j.client_deadline)}</>}
-          </span>
+      <div className="flex items-center justify-between gap-3 pt-1">
+        <span className="flex min-w-0 items-center gap-2 text-[13px] text-[var(--text-muted)]">
+          {who ? (
+            <>
+              <Avatar name={who} size={24} />
+              <span className="truncate">{who}</span>
+            </>
+          ) : (
+            <span className="text-[var(--text-dim)]">{j.stage === "qc2" ? "QC not routed" : "Unassigned"}</span>
+          )}
         </span>
-        <span
-          className={`num text-sm font-bold ${j.round >= 3 ? "text-[var(--bad-text)]" : j.round > 0 ? "text-[var(--warn-text)]" : "text-[var(--text-dim)]"}`}
-          title="Revision rounds"
-        >
-          R{j.round}
+        <span className={`inline-flex h-7 shrink-0 items-center gap-1 rounded-md px-2 text-[13px] font-semibold ${DEADLINE_CHIP_CLASSES[due.tone]}`}>
+          <i className={DEADLINE_CHIP_ICONS[due.tone]} /> {due.label}
         </span>
       </div>
-      {j.scrapped_at && (
-        <div className="border-t border-[var(--border-color-subtle)] pt-2 text-xs text-[var(--text-muted)]">
-          Scrapped by {j.scrapped_by_name ?? "—"} · {timeAgo(j.scrapped_at)}
-          {j.scrap_reason && <span className="mt-0.5 block">{j.scrap_reason}</span>}
-        </div>
-      )}
     </button>
   );
 }
@@ -640,6 +601,7 @@ export default function DashboardPage() {
     return () => query.removeEventListener("change", onChange);
   }, []);
   const [mobileStage, setMobileStage] = useState<Stage>("editing");
+  const effectiveView: "kanban" | "table" = narrow ? "kanban" : viewMode;
 
   const changeViewMode = (mode: "kanban" | "table") => {
     setViewMode(mode);
@@ -690,7 +652,7 @@ export default function DashboardPage() {
    * columns that shrink to fit their cards leave a page of dead space under
    * seven bare headers whenever a filter comes back empty. */
   const [boardRef, boardHeight] = useFillViewportHeight<HTMLDivElement>({
-    enabled: viewTab === "pipeline" && viewMode === "kanban",
+    enabled: viewTab === "pipeline" && effectiveView === "kanban",
   });
 
   const lead = isLead(user);
@@ -879,7 +841,7 @@ export default function DashboardPage() {
     /* Work queues go stale the moment someone else advances a job, and an
      * editor watching this table had no way to see it without reloading.
      * 30s matches `useNotifications`. */
-    { enabled: viewTab === "pipeline" && viewMode === "table" && !showEditorQueue, refetchInterval: 30_000 },
+    { enabled: viewTab === "pipeline" && effectiveView === "table" && !showEditorQueue, refetchInterval: 30_000 },
   );
   const filteredJobs: JobDetail[] = pipelineResp?.items ?? [];
   const total = pipelineResp?.total ?? 0;
@@ -1282,7 +1244,7 @@ export default function DashboardPage() {
             aria-label="Job status"
             value={filter}
             onChange={setFilter}
-            tabs={STATUS_CARDS.map((card) => ({
+            tabs={STATUS_CARDS.filter((card) => !(narrow && (card.key === "intake" || card.key === "active"))).map((card) => ({
               key: card.key,
               label: card.label,
               count: statusCounts ? statusCounts[card.key] : null,
@@ -1292,7 +1254,7 @@ export default function DashboardPage() {
           />
 
           {/* Search, filters and view mode */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-3">
             <div className="relative min-w-0 flex-1 sm:max-w-md">
               <i className="ri-search-line pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-lg text-[var(--text-dim)]" />
               <input
@@ -1310,7 +1272,7 @@ export default function DashboardPage() {
               aria-expanded={filtersOpen}
               aria-controls="pipeline-filter-drawer"
             >
-              <i className="ri-equalizer-2-line text-base" /> Filters
+              <i className="ri-equalizer-2-line text-base" /> <span className="max-md:hidden">Filters</span>
               {activeFilterCount > 0 && (
                 <span className="num rounded-full bg-[var(--primary)] px-1.5 text-xs leading-5 text-white">{activeFilterCount}</span>
               )}
@@ -1323,7 +1285,7 @@ export default function DashboardPage() {
                 <span aria-hidden className="h-3 w-[3px] rounded bg-[var(--warn-text)]" /> QC1 flagged
               </span>
             </div>
-            <Segmented
+            <div className="max-md:hidden"><Segmented
               aria-label="Pipeline view"
               value={viewMode}
               onChange={changeViewMode}
@@ -1331,7 +1293,7 @@ export default function DashboardPage() {
                 { key: "table", label: "Table", icon: "ri-table-line" },
                 { key: "kanban", label: "Board", icon: "ri-layout-column-line" },
               ]}
-            />
+            /></div>
           </div>
 
           {filtersOpen && <div className="fixed inset-0 z-[80] bg-black/60" onMouseDown={(event) => { if (event.target === event.currentTarget) setFiltersOpen(false); }}>
@@ -1518,7 +1480,7 @@ export default function DashboardPage() {
           {/* Kanban Board View — one query per column, each one filtered and
               counted by the server, so a column header states the real total
               rather than however many rows happened to be downloaded. */}
-          {viewMode === "kanban" && narrow && (
+          {effectiveView === "kanban" && narrow && (
             <div className="space-y-3">
               <TabBar
                 aria-label="Stage"
@@ -1541,7 +1503,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {viewMode === "kanban" && !narrow && (
+          {effectiveView === "kanban" && !narrow && (
             <div
               ref={boardRef}
               style={boardHeight ? { height: boardHeight } : undefined}
@@ -1564,7 +1526,7 @@ export default function DashboardPage() {
               has none, and a client with three hundred of them is never going
               to be filed a dropdown at a time — which is how a channel report
               stays mostly-unknown forever. */}
-          {viewMode === "table" && checkedJobs.length > 0 && (
+          {effectiveView === "table" && checkedJobs.length > 0 && (
             <div className="flex flex-wrap items-center gap-3 rounded-lg border border-[var(--primary)] bg-[var(--primary-glow-subtle)] px-3 py-2">
               <span className="rounded bg-[var(--bg-card)] px-2 py-0.5 text-xs font-bold text-[var(--primary-light)]">
                 {checkedJobs.length} selected
@@ -1650,7 +1612,7 @@ export default function DashboardPage() {
           {/* Table View — 9 columns at 14px with a sticky header. Video type,
               rush and channel live inside the Video / Client cells instead of
               columns of their own (rush was "—" on most rows). */}
-          {viewMode === "table" && (
+          {effectiveView === "table" && (
             <>
               {/* Phones: the same rows as the table, as cards — every field the
                   table has, so the two layouts never disagree. */}
@@ -2097,6 +2059,9 @@ function BoardColumn({
 
       <div className="flex-1 space-y-2 overflow-y-auto px-2.5 pb-2.5">
         {jobs.map((j) => {
+          if (full) {
+            return <MobileJobCard key={j.id} job={j} typeLabel={videoTypeLabel(j.video_type, catalogTypes)} onSelect={() => onSelect(j.id)} selected={false} hideStage />;
+          }
           const due = deadlineInfo(j.deadline, j.stage);
           const assignee = stage === "qc2" ? j.qc2_reviewer_name : j.editor_name;
           return (
